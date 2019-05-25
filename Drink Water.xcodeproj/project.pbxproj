@@ -56,15 +56,47 @@
 		B943874622990CC100452ABA /* Drink Water */ = {
 			isa = PBXGroup;
 			children = (
-				B943874722990CC100452ABA /* AppDelegate.swift */,
-				B943874922990CC100452ABA /* ViewController.swift */,
-				B943874B22990CC100452ABA /* Main.storyboard */,
-				B943875122990CC200452ABA /* Assets.xcassets */,
-				B943875322990CC200452ABA /* LaunchScreen.storyboard */,
-				B943875622990CC200452ABA /* Info.plist */,
-				B943874E22990CC100452ABA /* Drink_Water.xcdatamodeld */,
+				B943875F22990CF600452ABA /* Classes */,
+				B943875E22990CE700452ABA /* Supporting Files */,
+				B943875D22990CE000452ABA /* Views */,
+				B943875C22990CD400452ABA /* Controllers */,
 			);
 			path = "Drink Water";
+			sourceTree = "<group>";
+		};
+		B943875C22990CD400452ABA /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				B943874922990CC100452ABA /* ViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		B943875D22990CE000452ABA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B943874B22990CC100452ABA /* Main.storyboard */,
+				B943875322990CC200452ABA /* LaunchScreen.storyboard */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B943875E22990CE700452ABA /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B943874722990CC100452ABA /* AppDelegate.swift */,
+				B943875122990CC200452ABA /* Assets.xcassets */,
+				B943874E22990CC100452ABA /* Drink_Water.xcdatamodeld */,
+				B943875622990CC200452ABA /* Info.plist */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B943875F22990CF600452ABA /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -288,7 +320,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = E38495SVJK;
-				INFOPLIST_FILE = "Drink Water/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Drink Water/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -306,7 +338,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = E38495SVJK;
-				INFOPLIST_FILE = "Drink Water/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Drink Water/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
