@@ -8,22 +8,32 @@
 
 /* Begin PBXBuildFile section */
 		B943874822990CC100452ABA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B943874722990CC100452ABA /* AppDelegate.swift */; };
-		B943874A22990CC100452ABA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B943874922990CC100452ABA /* ViewController.swift */; };
+		B943874A22990CC100452ABA /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B943874922990CC100452ABA /* MenuViewController.swift */; };
 		B943874D22990CC100452ABA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B943874B22990CC100452ABA /* Main.storyboard */; };
 		B943875022990CC100452ABA /* Drink_Water.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B943874E22990CC100452ABA /* Drink_Water.xcdatamodeld */; };
 		B943875222990CC200452ABA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B943875122990CC200452ABA /* Assets.xcassets */; };
 		B943875522990CC200452ABA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B943875322990CC200452ABA /* LaunchScreen.storyboard */; };
+		B943876422991BB800452ABA /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B943876322991BB800452ABA /* Extension.swift */; };
+		B9C2101E229BC5D300CBE2AC /* ModalCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C2101D229BC5D300CBE2AC /* ModalCollectionViewController.swift */; };
+		B9C21020229BC63000CBE2AC /* ModalCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C2101F229BC63000CBE2AC /* ModalCollectionViewCell.swift */; };
+		B9C21022229BD80200CBE2AC /* MenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C21021229BD80200CBE2AC /* MenuCollectionViewCell.swift */; };
+		B9C21024229BEB8B00CBE2AC /* CupDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C21023229BEB8B00CBE2AC /* CupDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B943874422990CC100452ABA /* Drink Water.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Drink Water.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B943874722990CC100452ABA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		B943874922990CC100452ABA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		B943874922990CC100452ABA /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		B943874C22990CC100452ABA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B943874F22990CC100452ABA /* Drink_Water.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Drink_Water.xcdatamodel; sourceTree = "<group>"; };
 		B943875122990CC200452ABA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B943875422990CC200452ABA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B943875622990CC200452ABA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B943876322991BB800452ABA /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		B9C2101D229BC5D300CBE2AC /* ModalCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalCollectionViewController.swift; sourceTree = "<group>"; };
+		B9C2101F229BC63000CBE2AC /* ModalCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ModalCollectionViewCell.swift; path = "Drink Water/Classes/ModalCollectionViewCell.swift"; sourceTree = SOURCE_ROOT; };
+		B9C21021229BD80200CBE2AC /* MenuCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MenuCollectionViewCell.swift; path = "Drink Water/Classes/MenuCollectionViewCell.swift"; sourceTree = SOURCE_ROOT; };
+		B9C21023229BEB8B00CBE2AC /* CupDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CupDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +66,7 @@
 		B943874622990CC100452ABA /* Drink Water */ = {
 			isa = PBXGroup;
 			children = (
+				B943876222991B9C00452ABA /* Extension */,
 				B943875F22990CF600452ABA /* Classes */,
 				B943875E22990CE700452ABA /* Supporting Files */,
 				B943875D22990CE000452ABA /* Views */,
@@ -67,7 +78,9 @@
 		B943875C22990CD400452ABA /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				B943874922990CC100452ABA /* ViewController.swift */,
+				B943874922990CC100452ABA /* MenuViewController.swift */,
+				B9C2101D229BC5D300CBE2AC /* ModalCollectionViewController.swift */,
+				B9C21023229BEB8B00CBE2AC /* CupDetailViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -95,8 +108,18 @@
 		B943875F22990CF600452ABA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				B9C21021229BD80200CBE2AC /* MenuCollectionViewCell.swift */,
+				B9C2101F229BC63000CBE2AC /* ModalCollectionViewCell.swift */,
 			);
 			path = Classes;
+			sourceTree = "<group>";
+		};
+		B943876222991B9C00452ABA /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				B943876322991BB800452ABA /* Extension.swift */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -170,9 +193,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B943874A22990CC100452ABA /* ViewController.swift in Sources */,
+				B943874A22990CC100452ABA /* MenuViewController.swift in Sources */,
+				B9C21022229BD80200CBE2AC /* MenuCollectionViewCell.swift in Sources */,
+				B9C21024229BEB8B00CBE2AC /* CupDetailViewController.swift in Sources */,
 				B943874822990CC100452ABA /* AppDelegate.swift in Sources */,
+				B9C21020229BC63000CBE2AC /* ModalCollectionViewCell.swift in Sources */,
 				B943875022990CC100452ABA /* Drink_Water.xcdatamodeld in Sources */,
+				B943876422991BB800452ABA /* Extension.swift in Sources */,
+				B9C2101E229BC5D300CBE2AC /* ModalCollectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
