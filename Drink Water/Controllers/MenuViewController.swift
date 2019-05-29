@@ -13,6 +13,9 @@ class MenuViewController: UIViewController {
     
     var water: [Water]?
     
+    var progressValue: Int32 = 0
+    var mainIndex: Int?
+    
     @IBOutlet weak var topCustomView: UIView!
     @IBOutlet weak var valueWaterLabel: UILabel!
     @IBOutlet weak var valueProgressView: UIProgressView!
@@ -20,7 +23,7 @@ class MenuViewController: UIViewController {
     @IBOutlet weak var addWaterButton: UIButton!
     @IBOutlet weak var changeCupButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
-   
+    
     //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,11 +35,45 @@ class MenuViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "delete"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "save"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(centerLabel(notification:)), name: NSNotification.Name(rawValue: "centerLabel"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(progressUpdate(notification:)), name: NSNotification.Name(rawValue: "waterValue"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(progressUpdateDelete(notification:)), name: NSNotification.Name(rawValue: "waterValueDelete"), object: nil)
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        //При загрузке проверка массива если пустой скрытие collectionView b  и отображение centerLabel
+        if water == nil || water == [] {
+            nilCoreDataArray()
+            print("water == nil")
+        } else if water != nil  {
+            fillCoreDataArray()
+            print("water != nil")
+        }
+    }
+    
+    //Для пустой CoreData
+    func nilCoreDataArray() {
+        centerViewLabel.isHidden = false
+        collectionView.isHidden = true
+        valueProgressView.setProgress(0, animated: false)
+    }
+    
+    //Для заполненной CoreData
+    func fillCoreDataArray() {
+        collectionView.isHidden = false
+        centerViewLabel.isHidden = true
+        
+    }
+    
+    func fillProgressView() {
+        
     }
     
     //Перезагрузка CollectionView
     @objc func loadList(notification: NSNotification) {
-       
+        
         loadCoreData()
         self.collectionView.reloadData()
     }
@@ -52,136 +89,165 @@ class MenuViewController: UIViewController {
         }
     }
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
+    //Отслеживние массива waterSummary для обновления progressView
+    @objc func progressUpdate(notification: NSNotification) {
         
-        //При загрузке проверка массива если пустой скрытие collectionView b  и отображение centerLabel
-        if water == nil || water == [] {
-            centerViewLabel.isHidden = false
-            collectionView.isHidden = true
-            print("water == nil")
-        } else if water != nil  {
-            collectionView.isHidden = false
-            centerViewLabel.isHidden = true
-            print("water != nil")
+        guard let values = water else { return }
+        
+        progressValue = 0
+        for i in values {
+            progressValue += i.waterValue
         }
+        
+        print(progressValue)
+        print("ADD")
+     
     }
     
-    //Настройка Вью
-    func setupView() {
-        topCustomView.layer.cornerRadius = 15
-        topCustomView.clipsToBounds = true
-        topCustomView.layer.borderWidth = 2
-        topCustomView.backgroundColor = .white
-        topCustomView.layer.borderColor = UIColor(red: 231 / 255, green: 231 / 255, blue: 231 / 255, alpha: 1).cgColor
-    }
-    
-    //Настройка ячейки
-    func configureCell(cell: MenuCollectionViewCell, indexPath: IndexPath) {
+    @objc func progressUpdateDelete(notification: NSNotification) {
         
-        //Доступ к свойствам модели
-        guard
-            let indexImage = water?[indexPath.row].imageName,
-            let indexValueWater = water?[indexPath.row].waterValue,
-            let indexTime = water?[indexPath.row].time else { return }
-        
-        //Настройка вью ячейки
-        cell.customImageView.image = UIImage(named: indexImage)
-        cell.waterValueLabel.text = String(indexValueWater) + " мл."
-        cell.timeAddLabel.text = indexTime
-        
-        cell.layer.cornerRadius = 15
-        cell.clipsToBounds = true
-        cell.layer.borderWidth = 2
-        cell.layer.borderColor = UIColor(red: 231 / 255, green: 231 / 255, blue: 231 / 255, alpha: 1).cgColor
-        
-    }
-    
-    //Загрузка из CoreData
-    func loadCoreData() {
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        
-        let context = appDelegate.persistentContainer.viewContext
-        
-        let fetchRequest: NSFetchRequest<Water> = Water.fetchRequest()
-        
-        do {
-            water = try context.fetch(fetchRequest)
-        } catch {
-            print(error)
-        }
-    }
-    
-    //Добавить воду
-    @IBAction func addWaterButton(_ sender: UIButton) {
-    }
-    
-    //Изменить бокал
-    @IBAction func changeCupButton(_ sender: UIButton) {
-        
-        //Переход модальный
-        let popUpVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ModalCupChange") as! ModalCollectionViewController
-        self.addChild(popUpVC)
-        popUpVC.view.frame = self.view.frame
-        self.view.addSubview(popUpVC.view)
-        popUpVC.didMove(toParent: self)
-    }
-    
-    //Тест
-    @IBAction func loadButton(_ sender: UIBarButtonItem) {
         loadCoreData()
-        self.collectionView.reloadData()
-    }
-    
-}
-
-extension MenuViewController: UICollectionViewDataSource {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if water != nil {
-            return water!.count
+        guard let values = water else { return }
+        
+        //Обнуление если массив пустой
+        if values.first?.waterValue == nil && values.last?.waterValue == nil {
+           
+            progressValue = 0
+            print("This is refresh: " + "\(0)")
+        
+        //Логика подсчета значения прогрес из массива если он не пустой
+        } else {
+            progressValue = 0
+            for i in values {
+                progressValue += i.waterValue
+            }
+                print(progressValue)
+                print("LAst != nil: " + "\(0)")
+            }
         }
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as? MenuCollectionViewCell {
-            
-            configureCell(cell: cell, indexPath: indexPath)
-            
-            return cell
+        
+        //Настройка Вью
+        func setupView() {
+            topCustomView.layer.cornerRadius = 15
+            topCustomView.clipsToBounds = true
+            topCustomView.layer.borderWidth = 2
+            topCustomView.backgroundColor = .white
+            topCustomView.layer.borderColor = UIColor(red: 231 / 255, green: 231 / 255, blue: 231 / 255, alpha: 1).cgColor
         }
-        return UICollectionViewCell()
         
+        //Настройка ячейки
+        func configureCell(cell: MenuCollectionViewCell, indexPath: IndexPath) {
+            
+            //Доступ к свойствам модели
+            guard
+                let indexImage = water?[indexPath.row].imageName,
+                let indexValueWater = water?[indexPath.row].waterValue,
+                let indexTime = water?[indexPath.row].time else { return }
+            
+            //Настройка вью ячейки
+            cell.customImageView.image = UIImage(named: indexImage)
+            cell.waterValueLabel.text = String(indexValueWater) + " мл."
+            cell.timeAddLabel.text = indexTime
+            
+            cell.layer.cornerRadius = 15
+            cell.clipsToBounds = true
+            cell.layer.borderWidth = 2
+            cell.layer.borderColor = UIColor(red: 231 / 255, green: 231 / 255, blue: 231 / 255, alpha: 1).cgColor
+            
+        }
+        
+        //Загрузка из CoreData Water
+        func loadCoreData() {
+            
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            
+            let context = appDelegate.persistentContainer.viewContext
+            
+            let fetchRequest: NSFetchRequest<Water> = Water.fetchRequest()
+            
+            do {
+                water = try context.fetch(fetchRequest)
+                
+                //Заполнение прогрессВью
+                fillProgressView()
+                
+            } catch {
+                print(error)
+            }
+        }
+        
+        //Добавить воду
+        @IBAction func addWaterButton(_ sender: UIButton) {
+        }
+        
+        //Изменить бокал
+        @IBAction func changeCupButton(_ sender: UIButton) {
+            
+            //Переход модальный
+            let popUpVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ModalCupChange") as! ModalCollectionViewController
+            self.addChild(popUpVC)
+            popUpVC.view.frame = self.view.frame
+            self.view.addSubview(popUpVC.view)
+            popUpVC.didMove(toParent: self)
+        }
+        
+        //Тест
+        @IBAction func loadButton(_ sender: UIBarButtonItem) {
+            loadCoreData()
+            self.collectionView.reloadData()
+        }
         
     }
-}
-
-extension MenuViewController: UICollectionViewDelegate {
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    extension MenuViewController: UICollectionViewDataSource {
         
-        //Выбранная ячейка
-        let selectedItemArray = water?[indexPath.row]
+        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+            if water != nil {
+                return water!.count
+            }
+            return 1
+        }
         
-        //Номер ячейки
-        let index = indexPath.row
-        
-        //Переход модальный
-        let popUpVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SelectedCup") as! CupDetailViewController
-        
-        //Передача данных в модальный контроллер
-        popUpVC.selectedItem = selectedItemArray
-        popUpVC.index = index
-        
-        self.addChild(popUpVC)
-        popUpVC.view.frame = self.view.frame
-        self.view.addSubview(popUpVC.view)
-        popUpVC.didMove(toParent: self)
-        
+        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as? MenuCollectionViewCell {
+                
+                configureCell(cell: cell, indexPath: indexPath)
+                
+                return cell
+            }
+            return UICollectionViewCell()
+            
+            
+        }
     }
+    
+    extension MenuViewController: UICollectionViewDelegate {
+        
+        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+            
+            //Выбранная ячейка
+            let selectedItemArray = water?[indexPath.row]
+            
+            //Номер ячейки
+            let index = indexPath.row
+            
+            //Нужен индекс для последующего удаления из массива для заполнения progressView
+            mainIndex = index
+            
+            
+            //Переход модальный
+            let popUpVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SelectedCup") as! CupDetailViewController
+            
+            //Передача данных в модальный контроллер
+            popUpVC.selectedItem = selectedItemArray
+            popUpVC.index = index
+            
+            self.addChild(popUpVC)
+            popUpVC.view.frame = self.view.frame
+            self.view.addSubview(popUpVC.view)
+            popUpVC.didMove(toParent: self)
+            
+        }
 }
 
 

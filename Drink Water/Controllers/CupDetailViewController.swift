@@ -12,6 +12,7 @@ import CoreData
 class CupDetailViewController: UIViewController {
     
     var water: [Water]?
+    
     var selectedItem: Water?
     var index: Int?
     
@@ -110,6 +111,8 @@ class CupDetailViewController: UIViewController {
         //Удаление из БД
         //Удаление из массива
         water?.remove(at: index!)
+        
+        
         //Удаление из контекста
         context.delete(selectedItem!)
         
@@ -125,6 +128,7 @@ class CupDetailViewController: UIViewController {
         //Отправка уведомления об изменении значения
         NotificationCenter.default.post(name: NSNotification.Name("delete"), object: nil)
         NotificationCenter.default.post(name: NSNotification.Name("centerLabel"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("waterValueDelete"), object: nil)
         
         moveOut()
     }

@@ -91,11 +91,12 @@ class ModalCollectionViewController: UIViewController {
         do {
             try context.save()
             water?.append(item)
-            print("Saved!")
+            //print("Saved!")
         } catch {
             print(error)
         }
     }
+    
 }
 
 extension ModalCollectionViewController: UICollectionViewDataSource {
@@ -116,7 +117,6 @@ extension ModalCollectionViewController: UICollectionViewDataSource {
         return UICollectionViewCell()
         
     }
-    
     
 }
 
@@ -141,6 +141,7 @@ extension ModalCollectionViewController: UICollectionViewDelegate {
         //Отправка уведомления об изменении значения
         NotificationCenter.default.post(name: NSNotification.Name("save"), object: nil)
         NotificationCenter.default.post(name: NSNotification.Name("centerLabel"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("waterValue"), object: nil)
         
         //Анимация выхода
         moveOut()
