@@ -13,6 +13,7 @@ class CupDetailViewController: UIViewController {
     
     var water: [Water]?
     
+    //ЗАписывается объект из массива Water по индексу пришедшему из MenuVC
     var selectedItem: Water?
     var index: Int?
     
@@ -45,7 +46,7 @@ class CupDetailViewController: UIViewController {
         guard let item = selectedItem else { return }
         
         timeLabel.text = item.time
-        waterValueCup.text = String(item.waterValue)
+        waterValueCup.text = String(Int(item.waterValue))
         customImageView.image = UIImage(named: item.imageName!)
     }
     
@@ -108,10 +109,8 @@ class CupDetailViewController: UIViewController {
         // Получаю сам контекст
         let context = appDelegate.persistentContainer.viewContext
         
-        //Удаление из БД
         //Удаление из массива
         water?.remove(at: index!)
-        
         
         //Удаление из контекста
         context.delete(selectedItem!)

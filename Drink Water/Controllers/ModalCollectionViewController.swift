@@ -67,7 +67,7 @@ class ModalCollectionViewController: UIViewController {
     }
     
     //Сохранение в БД выбранный стакан чтобы отобразить в CollectionView MenuVC
-    func saveItemInsideCoreData(imageName: String, waterValue: Int, time: String) {
+    func saveItemInsideCoreData(imageName: String, waterValue: Float, time: String) {
         
         // Добираюсь до АпДелегат. Нужно будет для свойства СейвКонтекст
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -84,7 +84,7 @@ class ModalCollectionViewController: UIViewController {
         
         // Устанавливаю значение для carObject (из принимаемого значения функцией)
         item.imageName = imageName
-        item.waterValue = Int32(waterValue)
+        item.waterValue = waterValue
         item.time = time
         
         // Сохраняю контекст, для того чтобы сохранился сам объект
@@ -136,7 +136,7 @@ extension ModalCollectionViewController: UICollectionViewDelegate {
         let resultDate = formatter.string(from: thisTime)
         
         //Сохранение в CoreData
-        saveItemInsideCoreData(imageName: imageIndex, waterValue: valueWaterIndex, time: resultDate)
+        saveItemInsideCoreData(imageName: imageIndex, waterValue: Float(valueWaterIndex), time: resultDate)
         
         //Отправка уведомления об изменении значения
         NotificationCenter.default.post(name: NSNotification.Name("save"), object: nil)
