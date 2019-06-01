@@ -30,6 +30,7 @@ class MenuViewController: UIViewController {
     
     @IBOutlet weak var topCustomView: UIView!
     @IBOutlet weak var valueWaterLabel: UILabel!
+    @IBOutlet weak var totalSummaryWaterLabel: UILabel!
     @IBOutlet weak var valueProgressView: UIProgressView!
     @IBOutlet weak var centerViewLabel: UILabel!
     @IBOutlet weak var addWaterButton: UIButton!
@@ -237,10 +238,20 @@ class MenuViewController: UIViewController {
         popUpVC.didMove(toParent: self)
     }
     
-    //Тест
-    @IBAction func loadButton(_ sender: UIBarButtonItem) {
-        loadCoreData()
-        self.collectionView.reloadData()
+    //Изменить вес
+    @IBAction func changeWeightButton(_ sender: UIBarButtonItem) {
+        
+        self.navigationController?.navigationBar.alpha = 0.2
+        
+       let popUpVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "WeightVC") as! WeightViewController
+        self.addChild(popUpVC)
+        popUpVC.view.frame = self.view.frame
+        self.view.addSubview(popUpVC.view)
+        popUpVC.didMove(toParent: self)
+        
+        NotificationCenter.default.post(name: NSNotification.Name("WeightButton"), object: nil)
+        
+        
     }
     
 }
