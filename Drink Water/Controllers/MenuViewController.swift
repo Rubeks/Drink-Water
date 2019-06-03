@@ -12,9 +12,11 @@ import CoreData
 class MenuViewController: UIViewController {
     
     var water: [Water]?
+    var weight: [Weight]?
     
     var progressValue: Float = 0.0
     private var progressNumber: Float = 0.0
+    private var totalWater: Int = 0
     
     //Установка в лейбл количества выпитой воды
     var valueWaterLabelChange: String {
@@ -44,6 +46,9 @@ class MenuViewController: UIViewController {
         //Загрузка из CoreData
         loadCoreData()
         
+        //Загрузка веса и количества воды необходимого выпить в сутки
+        totalSummaryWaterUpdateStartApp()
+        
         //Заполнение Лейбла и прогрессВью
         progressUpdateStartApp()
         
@@ -56,6 +61,7 @@ class MenuViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(centerLabel(notification:)), name: NSNotification.Name(rawValue: "centerLabel"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(progressUpdate(notification:)), name: NSNotification.Name(rawValue: "waterValue"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(progressUpdateDelete(notification:)), name: NSNotification.Name(rawValue: "waterValueDelete"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTotalSummaryWater), name: NSNotification.Name(rawValue: "WeightChangeAndSave"), object: nil)
         
     }
     
@@ -114,10 +120,10 @@ class MenuViewController: UIViewController {
         }
         
         //Установка значения в лейбл
-        valueWaterLabelChange = String(Int(progressValue)) + " /2500 мл."
+        valueWaterLabelChange = String(Int(progressValue))
         
         //Для прогрессВью
-        progressNumber = progressValue / 2500
+        progressNumber = progressValue / Float(totalWater)
         
         //Установка в прогрессВью
         valueProgressView.setProgress(progressNumber, animated: true)
@@ -132,7 +138,7 @@ class MenuViewController: UIViewController {
         if values.first?.waterValue == nil && values.last?.waterValue == nil {
             progressValue = 0
             print("This is refresh: " + "\(0)")
-            valueWaterLabelChange = String(Int(progressValue)) + " /2500 мл."
+            valueWaterLabelChange = String(Int(progressValue))
             progressNumber = 0
             valueProgressView.setProgress(progressNumber, animated: true)
             
@@ -142,7 +148,7 @@ class MenuViewController: UIViewController {
             for i in values {
                 progressValue += i.waterValue
             }
-            valueWaterLabelChange = String(Int(progressValue)) + " /2500 мл."
+            valueWaterLabelChange = String(Int(progressValue))
             
             //Для прогрессВью
             progressNumber = progressValue / 2500
@@ -152,27 +158,191 @@ class MenuViewController: UIViewController {
         }
     }
     
+    //Обновления общего количества воды которое нужно выпить.
+    @objc func updateTotalSummaryWater() {
+        self.navigationController?.navigationBar.alpha = 1
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest: NSFetchRequest<Weight> = Weight.fetchRequest()
+        
+        do {
+            weight = try context.fetch(fetchRequest)
+            
+            let genderLoad = weight?.first?.gender
+            let weightLoad = weight?.first?.weight
+            let physicalActivityLoad = weight?.first?.physicalActivity
+            let sunLoad = weight?.first?.sunClimat
+            let sickLoad = weight?.first?.sick
+            
+            //1-Мужик; 2-С весом; 3-с активностью; 4-без солнца; 5-без болезни;
+            if genderLoad == false && sunLoad == false && sickLoad == false {
+                let value = Int((weightLoad! * 0.04 + physicalActivityLoad! * 0.6) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+               
+            //1-Мужик; 2-С весом; 3-с активностью; 4-с солнцем; 5-без болезни;
+            if genderLoad == false && sunLoad == true && sickLoad == false {
+                let value = Int((weightLoad! * 0.04 + physicalActivityLoad! * 0.6 + 0.35) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+            
+            //1-Мужик; 2-С весом; 3-с активностью; 4-без солнцем; 5-с болезнью;
+            if genderLoad == false && sunLoad == false && sickLoad == true {
+                let value = Int((weightLoad! * 0.04 + physicalActivityLoad! * 0.6 + 0.95) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+            
+                
+            //1-Мужик; 2-С весом; 3-с активностью; 4-с солнцем; 5-с болезнью;
+            if genderLoad == false && sunLoad == true && sickLoad == true {
+                let value = Int((weightLoad! * 0.04 + physicalActivityLoad! * 0.6 + 0.35 + 0.95) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+                
+                //-----------------------------------------
+            
+            //1-Женщина; 2-С весом; 3-с активностью; 4-без солнца; 5-без болезни;
+            else if genderLoad == true && sunLoad == false && sickLoad == false {
+                let value = Int((weightLoad! * 0.03 + physicalActivityLoad! * 0.4) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+            
+            //1-Женщина; 2-С весом; 3-с активностью; 4-с солнцем; 5-без болезни;
+            else if genderLoad == true && sunLoad == true && sickLoad == false {
+                let value = Int((weightLoad! * 0.03 + physicalActivityLoad! * 0.4 + 0.15) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+                
+            //1-Женщина; 2-С весом; 3-с активностью; 4-без солнца; 5-с болезнью;
+            else if genderLoad == true && sunLoad == false && sickLoad == true {
+                let value = Int((weightLoad! * 0.03 + physicalActivityLoad! * 0.4 + 0.85) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+            
+            //1-Женщина; 2-С весом; 3-с активностью; 4-с солнцем; 5- c болезью;
+            else if genderLoad == true && sunLoad == true && sickLoad == true {
+                let value = Int((weightLoad! * 0.03 + physicalActivityLoad! * 0.4 + 0.15 + 0.85) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    //Установка значения progressView при запуске приложения
     private func progressUpdateStartApp() {
-        if water == nil {
-            valueWaterLabelChange = "0/2500 мл."
+        if water == nil || water == [] {
+            valueWaterLabelChange = "0"
             valueProgressView.setProgress(0, animated: false)
+            
         } else {
+            
             progressValue = 0
             progressNumber = 0
-            
+
             guard let values = water else { return }
             for i in values {
                 progressValue += i.waterValue
             }
-            
+
             //Установка значения в лейбл
-            valueWaterLabelChange = String(Int(progressValue)) + " /2500 мл."
-            
+            valueWaterLabelChange = String(Int(progressValue))
+
             //Для прогрессВью
-            progressNumber = progressValue / 2500
-            
+            progressNumber = progressValue / Float(totalWater)
+
             //Установка в прогрессВью
             valueProgressView.setProgress(progressNumber, animated: false)
+        }
+    }
+    
+    ////Установка значения обшего количества воды при запуске приложения
+    private func totalSummaryWaterUpdateStartApp() {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest: NSFetchRequest<Weight> = Weight.fetchRequest()
+        
+        do {
+            weight = try context.fetch(fetchRequest)
+            
+            let genderLoad = weight?.first?.gender
+            let weightLoad = weight?.first?.weight
+            let physicalActivityLoad = weight?.first?.physicalActivity
+            let sunLoad = weight?.first?.sunClimat
+            let sickLoad = weight?.first?.sick
+            
+            //1-Мужик; 2-С весом; 3-с активностью; 4-без солнца; 5-без болезни;
+            if genderLoad == false && sunLoad == false && sickLoad == false {
+                let value = Int((weightLoad! * 0.04 + physicalActivityLoad! * 0.6) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+            
+            //1-Мужик; 2-С весом; 3-с активностью; 4-с солнцем; 5-без болезни;
+            if genderLoad == false && sunLoad == true && sickLoad == false {
+                let value = Int((weightLoad! * 0.04 + physicalActivityLoad! * 0.6 + 0.35) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+            
+            //1-Мужик; 2-С весом; 3-с активностью; 4-без солнцем; 5-с болезнью;
+            if genderLoad == false && sunLoad == false && sickLoad == true {
+                let value = Int((weightLoad! * 0.04 + physicalActivityLoad! * 0.6 + 0.95) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+            
+            
+            //1-Мужик; 2-С весом; 3-с активностью; 4-с солнцем; 5-с болезнью;
+            if genderLoad == false && sunLoad == true && sickLoad == true {
+                let value = Int((weightLoad! * 0.04 + physicalActivityLoad! * 0.6 + 0.35 + 0.95) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+                
+                //-----------------------------------------
+                
+                //1-Женщина; 2-С весом; 3-с активностью; 4-без солнца; 5-без болезни;
+            else if genderLoad == true && sunLoad == false && sickLoad == false {
+                let value = Int((weightLoad! * 0.03 + physicalActivityLoad! * 0.4) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+                
+                //1-Женщина; 2-С весом; 3-с активностью; 4-с солнцем; 5-без болезни;
+            else if genderLoad == true && sunLoad == true && sickLoad == false {
+                let value = Int((weightLoad! * 0.03 + physicalActivityLoad! * 0.4 + 0.15) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+                
+                //1-Женщина; 2-С весом; 3-с активностью; 4-без солнца; 5-с болезнью;
+            else if genderLoad == true && sunLoad == false && sickLoad == true {
+                let value = Int((weightLoad! * 0.03 + physicalActivityLoad! * 0.4 + 0.85) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+                
+                //1-Женщина; 2-С весом; 3-с активностью; 4-с солнцем; 5- c болезью;
+            else if genderLoad == true && sunLoad == true && sickLoad == true {
+                let value = Int((weightLoad! * 0.03 + physicalActivityLoad! * 0.4 + 0.15 + 0.85) * 1000)
+                totalWater = value
+                totalSummaryWaterLabel.text = "/" + String(value) + "мл."
+            }
+            print("totalSummaryWaterUpdateStartApp " + "\(totalWater)")
+        } catch {
+            print(error)
         }
     }
     
@@ -243,17 +413,14 @@ class MenuViewController: UIViewController {
         
         self.navigationController?.navigationBar.alpha = 0.2
         
-       let popUpVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "WeightVC") as! WeightViewController
+        let popUpVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "WeightVC") as! WeightViewController
         self.addChild(popUpVC)
         popUpVC.view.frame = self.view.frame
         self.view.addSubview(popUpVC.view)
         popUpVC.didMove(toParent: self)
         
         NotificationCenter.default.post(name: NSNotification.Name("WeightButton"), object: nil)
-        
-        
     }
-    
 }
 
 extension MenuViewController: UICollectionViewDataSource {

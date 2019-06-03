@@ -13,13 +13,14 @@ class WeightViewController: UIViewController {
     
     var weight: [Weight]?
     
+    //Свойства для временного хранения
     var genderClassValue: Bool?
     var weightClassValue: Float?
     var physicalActivityClassValue: Float?
     var sunClimatClassValue: Bool?
     var sickClassValue: Bool?
     
-    
+    //Outlets
     @IBOutlet weak var genderSegmentControl: UISegmentedControl!
     @IBOutlet weak var weightLabel: UILabel!
     @IBOutlet weak var weightSlider: UISlider! {
@@ -33,7 +34,7 @@ class WeightViewController: UIViewController {
     @IBOutlet weak var physicalActivitySlider: UISlider!  {
         didSet {
             physicalActivitySlider.value = 0
-            physicalActivitySlider.minimumValue = 0.5
+            physicalActivitySlider.minimumValue = 0.0
             physicalActivitySlider.maximumValue = 6
         }
     }
@@ -168,6 +169,7 @@ class WeightViewController: UIViewController {
         }
     }
     
+    //Заполнение аутлетов
     private func fillOutlets() {
         
         //segment
@@ -257,13 +259,19 @@ class WeightViewController: UIViewController {
     
     @IBAction func saveButton(_ sender: UIButton) {
         
+        //Первое сохранение если массив пустой
         if weight == nil || weight == [] {
             
             saveWeightToCoreData(gender: genderClassValue!, weightValue: weightClassValue!, physicalActivity: physicalActivityClassValue!, sunClimat: sunClimatClassValue!, sick: sickClassValue!)
             
+            //Для отслеживания
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "WeightChangeAndSave"), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name("waterValue"), object: nil)
+            
             moveOut()
         }
         
+            //Если массив не пустой то он обнуляется, чтобы там всегда был 1 элемент
         else {
             let firstItem = weight?.first
             // Добираюсь до АпДелегат. Нужно будет для свойства СейвКонтекст
@@ -284,9 +292,13 @@ class WeightViewController: UIViewController {
                 print(error)
             }
             
-            print("delete item success")
+            //print("delete item success")
             
             saveWeightToCoreData(gender: genderClassValue!, weightValue: weightClassValue!, physicalActivity: physicalActivityClassValue!, sunClimat: sunClimatClassValue!, sick: sickClassValue!)
+            
+             //Для отслеживания
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "WeightChangeAndSave"), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name("waterValue"), object: nil)
             
             moveOut()
         }
