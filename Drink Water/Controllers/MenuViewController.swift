@@ -393,9 +393,6 @@ class MenuViewController: UIViewController {
         }
     }
     
-    //Добавить воду
-    @IBAction func addWaterButton(_ sender: UIButton) {
-    }
     
     //Изменить бокал
     @IBAction func changeCupButton(_ sender: UIButton) {
